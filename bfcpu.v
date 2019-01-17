@@ -82,6 +82,7 @@ wire [31:0]stack_read_addr = sp;
 reg stack_write_en;
 reg [i_addr_width-1:0]stack_write_data;
 wire [i_addr_width-1:0]stack_read_data;
+reg [i_addr_width-1:0]stack_read_data_reg;
 
 instr_decode i_dec(
 	.instr(instruction),
@@ -251,7 +252,7 @@ always @(posedge clk) begin
 					jmp <= 1;
 				else
 					jmp <= 0;
-
+				stack_read_data_reg <= stack_read_data;
 				state_next <= `STATE_IF_REQ;
 			end
 			default:
@@ -360,7 +361,7 @@ always @(negedge clk) begin
 		end
 		if (state == `STATE_LOOP_END_EX) begin
 			if (d) begin
-				jmp_target <= stack_read_data + 1;
+				jmp_target <= stack_read_data_reg + 1;
 				last_loop_end_success <= 1;
 			end else begin
 				last_loop_end_success <= 0;
