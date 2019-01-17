@@ -1,10 +1,20 @@
 module top_tang(
 	input clk,
-	input rst_n,
+	input ext_rst_n,
 	output [2:0]led_n
 );
 
 `include "macros/direction.vh"
+
+reg [2:0] int_rst_cnt = 0;
+
+always @(posedge clk) begin
+	if (int_rst_cnt != 3'b111)
+		int_rst_cnt <= int_rst_cnt + 1;
+end
+
+wire int_rst_n = int_rst_cnt == 3'b111;
+wire rst_n = int_rst_n && ext_rst_n;
 
 reg [2:0]led_n;
 
@@ -71,7 +81,7 @@ d_mem_tang dm(
 
 always @(posedge clk) begin
 	if (!rst_n) begin
-		led_n <= 0;
+		led_n <= 3'b111;
 		io_ack <= 0;
 	end else begin
 		if (io_req) begin
