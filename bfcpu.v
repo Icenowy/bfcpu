@@ -317,6 +317,7 @@ always @(negedge clk) begin
 		last_loop_end_success = 0;
 		sp <= 0;
 		stack_write_en <= 0;
+		halt_n <= 1;
 	end else begin
 		if (state == `STATE_LOOP_START_EX) begin
 			if (!d) begin
@@ -335,7 +336,10 @@ always @(negedge clk) begin
 			if (d) begin
 				jmp_target <= stack_read_data + 1;
 			end else begin
-				sp <= sp - 1;
+				if (sp == 0)
+					halt_n <= 0;
+				else
+					sp <= sp - 1;
 			end
 		end
 	end
