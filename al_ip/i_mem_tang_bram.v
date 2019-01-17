@@ -15,7 +15,7 @@ module i_mem_tang_bram ( doa, addra, clka, rsta );
 
 	output [7:0] doa;
 
-	input  [7:0] addra;
+	input  [9:0] addra;
 	input  clka;
 	input  rsta;
 
@@ -23,11 +23,11 @@ module i_mem_tang_bram ( doa, addra, clka, rsta );
 
 
 	EG_LOGIC_BRAM #( .DATA_WIDTH_A(8),
-				.ADDR_WIDTH_A(8),
-				.DATA_DEPTH_A(256),
+				.ADDR_WIDTH_A(10),
+				.DATA_DEPTH_A(1024),
 				.DATA_WIDTH_B(8),
-				.ADDR_WIDTH_B(8),
-				.DATA_DEPTH_B(256),
+				.ADDR_WIDTH_B(10),
+				.DATA_DEPTH_B(1024),
 				.MODE("SP"),
 				.REGMODE_A("NOREG"),
 				.RESETMODE("SYNC"),
@@ -40,7 +40,7 @@ module i_mem_tang_bram ( doa, addra, clka, rsta );
 				.dia({8{1'b0}}),
 				.dib({8{1'b0}}),
 				.addra(addra),
-				.addrb({8{1'b0}}),
+				.addrb({10{1'b0}}),
 				.cea(1'b1),
 				.ceb(1'b0),
 				.ocea(1'b0),

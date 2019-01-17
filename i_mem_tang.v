@@ -1,6 +1,6 @@
 module i_mem_tang #(
 	parameter [7:0]i_addr_width = 8'd16,
-	parameter [31:0]i_mem_length = 32'd256
+	parameter [31:0]i_mem_length = 32'd1024
 )(
 	input clk,
 	input rst_n,

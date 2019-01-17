@@ -6,7 +6,7 @@ VVP = vvp
 
 OBJCOPY = objcopy
 
-INSTRUCTIONS_DEPTH = 256
+INSTRUCTIONS_DEPTH = 1024
 
 %.vvp: %.v
 	$(IVERILOG) $(IVFLAGS) $< -o $@

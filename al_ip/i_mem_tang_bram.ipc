@@ -15,7 +15,7 @@
         <mem_type>SP</mem_type>
     </MemoryType>
     <PortAOption>
-        <depth_a>256</depth_a>
+        <depth_a>1024</depth_a>
         <width_a>8</width_a>
         <register_a>None</register_a>
     </PortAOption>
