@@ -227,6 +227,10 @@ always @(posedge clk) begin
 			end
 			`STATE_D_EX: begin
 				d_dirty <= 1;
+				if (inc_d)
+					d <= d + 1;
+				else if (dec_d)
+					d <= d - 1;
 				state_next <= `STATE_IF_REQ;
 			end
 			`STATE_LOOP_START_EX: begin
@@ -325,11 +329,6 @@ always @(negedge clk) begin
 		dp <= 0;
 	end else begin
 		case (state)
-		`STATE_D_EX:
-			if (inc_d)
-				d <= d + 1;
-			else if (dec_d)
-				d <= d - 1;
 		`STATE_DP_EX:
 			if (inc_dp)
 				dp <= dp + 1;
