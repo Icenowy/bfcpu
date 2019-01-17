@@ -4,15 +4,15 @@ module instr_decode_tb();
 
 reg [7:0]instr;
 
-output inc_dp;
-output dec_dp;
-output inc_d;
-output dec_d;
-output out_d;
-output in_d;
-output loop_start;
-output loop_end;
-output nop;
+wire inc_dp;
+wire dec_dp;
+wire inc_d;
+wire dec_d;
+wire out_d;
+wire in_d;
+wire loop_start;
+wire loop_end;
+wire nop;
 
 instr_decode dec(instr, inc_dp, dec_dp, inc_d, dec_d, out_d, in_d, loop_start, loop_end, nop);
 
