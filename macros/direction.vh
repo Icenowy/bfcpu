@@ -1,2 +1,2 @@
-`define DIRECTION_READ	0x0
-`define DIRECTION_WRITE 0x1
+`define DIRECTION_READ	1'b0
+`define DIRECTION_WRITE 1'b1
