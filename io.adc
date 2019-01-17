@@ -1,5 +1,5 @@
 set_pin_assignment {clk} { LOCATION = K14; }
-set_pin_assignment {rst_n} { LOCATION = K16; }
+set_pin_assignment {ext_rst_n} { LOCATION = K16; }
 set_pin_assignment {led_n[0]} { LOCATION = R3; }
 set_pin_assignment {led_n[1]} { LOCATION = J14; }
 set_pin_assignment {led_n[2]} { LOCATION = P13; }

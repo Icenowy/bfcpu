@@ -28,7 +28,7 @@ bitstream: bfcpu.bit
 program: bfcpu.bit
 	$(TD) program.tcl
 
-bfcpu.bit: bfcpu.al td.tcl instructions.mif $(TD_SOURCES)
+bfcpu.bit: bfcpu.al td.tcl instructions.mif io.adc $(TD_SOURCES)
 	$(TD) td.tcl
 
 sim: instr_decode_tb.vcd top_sim.vcd
