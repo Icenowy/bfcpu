@@ -6,14 +6,14 @@ module ip_controller #(
 	input rst_n,
 	input update_ip,
 	input jmp,
-	input jmp_target,
-	output ip
+	input [i_addr_width-1:0]jmp_target,
+	output [i_addr_width-1:0]ip
 );
 
 reg [i_addr_width-1:0]ip;
 
 always @(posedge clk) begin
-	if (rst_n) begin
+	if (!rst_n) begin
 		ip <= reset_vector - 1;
 	end else begin
 		if (update_ip) begin

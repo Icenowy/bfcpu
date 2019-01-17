@@ -3,7 +3,7 @@ module bfcpu #(
 	parameter [8:0]d_addr_width = 8'd8,
 	parameter [31:0]reset_vector = 32'h0,
 	parameter [31:0]reset_dp = 32'h0,
-	parameter [31:0]max_loop_depth = 32'h100,
+	parameter [31:0]max_loop_depth = 32'h100
 )(
 	input clk,
 	input rst_n,
@@ -35,6 +35,15 @@ module bfcpu #(
 reg i_req;
 reg [i_addr_width-1:0]i_addr;
 
+reg d_req;
+reg d_dir;
+reg [d_addr_width-1:0]d_addr;
+reg [7:0]d_wdata;
+
+reg io_req;
+reg io_dir;
+reg [7:0]io_wdata;
+
 reg halt_n;
 
 wire [i_addr_width-1:0]ip;
@@ -55,9 +64,8 @@ reg [7:0]d;
 reg d_valid;
 reg d_dirty;
 
-reg state;
-
-reg state_next;
+reg [5:0]state;
+reg [5:0]state_next;
 
 wire update_ip = halt_n && state_next == `STATE_IF_REQ;
 reg jmp;
@@ -75,10 +83,23 @@ reg stack_write_en;
 reg [i_addr_width-1:0]stack_write_data;
 wire [i_addr_width-1:0]stack_read_data;
 
-ip_controller ip_ctrl#(
+instr_decode i_dec(
+	.instr(instruction),
+	.inc_dp(inc_dp),
+	.dec_dp(dec_dp),
+	.inc_d(inc_d),
+	.dec_d(dec_d),
+	.out_d(out_d),
+	.in_d(in_d),
+	.loop_start(loop_start),
+	.loop_end(loop_end),
+	.nop(nop)
+);
+
+ip_controller#(
 	.i_addr_width(i_addr_width),
-	.reset_vector(reset_vector),
-)(
+	.reset_vector(reset_vector)
+) ip_ctrl(
 	.clk(clk),
 	.rst_n(rst_n),
 	.update_ip(update_ip),
@@ -87,10 +108,10 @@ ip_controller ip_ctrl#(
 	.ip(ip)
 );
 
-stack_memory st_mem#(
+stack_ram#(
 	.i_addr_width(i_addr_width),
 	.max_loop_depth(max_loop_depth)
-)(
+) st_mem(
 	.clk(clk),
 
 	.write_addr(stack_write_addr),
@@ -98,7 +119,7 @@ stack_memory st_mem#(
 	.write_data(stack_write_data),
 
 	.read_addr(stack_read_addr),
-	.read_data(stack_read_data),
+	.read_data(stack_read_data)
 );
 
 always @(posedge clk) begin
@@ -108,6 +129,8 @@ always @(posedge clk) begin
 
 		jmp <= 0;
 		skip_loop_count <= 8'b0;
+		d_valid <= 0;
+		d_dirty <= 0;
 	end else begin
 		if (halt_n) begin
 			state <= state_next;
@@ -118,13 +141,14 @@ always @(posedge clk) begin
 			`STATE_IF_WAIT:
 				if (i_ack)
 					state_next <= `STATE_IF_ACK;
-			`STATE_IF_ACK:
+			`STATE_IF_ACK: begin
 				instruction <= i_rdata;
 				state_next <= `STATE_INSTR_DECODE;
+			end
 			`STATE_DATA_R_REQ:
 				state_next <= `STATE_DATA_R_WAIT;
 			`STATE_DATA_R_WAIT:
-				if (i_ack)
+				if (d_ack)
 					state_next <= `STATE_DATA_R_ACK;
 			`STATE_DATA_R_ACK: begin
 				d <= d_rdata;
@@ -142,7 +166,7 @@ always @(posedge clk) begin
 			`STATE_DATA_W_REQ:
 				state_next <= `STATE_DATA_W_WAIT;
 			`STATE_DATA_W_WAIT:
-				if (i_ack)
+				if (d_ack)
 					state_next <= `STATE_DATA_W_ACK;
 			`STATE_DATA_W_ACK: begin
 				d_dirty <= 0;
@@ -151,7 +175,7 @@ always @(posedge clk) begin
 			`STATE_IO_R_REQ:
 				state_next <= `STATE_IO_R_WAIT;
 			`STATE_IO_R_WAIT:
-				if (i_ack)
+				if (io_ack)
 					state_next <= `STATE_IO_R_ACK;
 			`STATE_IO_R_ACK: begin
 				d <= io_rdata;
@@ -162,7 +186,7 @@ always @(posedge clk) begin
 			`STATE_IO_W_REQ:
 				state_next <= `STATE_IO_W_WAIT;
 			`STATE_IO_W_WAIT:
-				if (i_ack)
+				if (io_ack)
 					state_next <= `STATE_IO_W_ACK;
 			`STATE_IO_W_ACK:
 				state_next <= `STATE_IF_REQ;
@@ -180,33 +204,36 @@ always @(posedge clk) begin
 					state_next <= d_dirty ? `STATE_DATA_W_REQ : `STATE_DP_EX;
 					jmp <= 0;
 				end else if (inc_d || dec_d) begin
-					state_next <= d_valid ? `STATE_DATA_R_REQ : `STATE_D_EX;
+					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_D_EX;
 					jmp <= 0;
 				end else if (out_d) begin
-					state_next <= d_valid ? `STATE_DATA_R_REQ : `STATE_IO_W_REQ;
+					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_IO_W_REQ;
 					jmp <= 0;
 				end else if (in_d) begin
 					state_next <= `STATE_IO_R_REQ;
 					jmp <= 0;
 				end else if (loop_start) begin
-					state_next <= `d_valid ? `STATE_DATA_R_REQ : `STATE_LOOP_START_EX;
+					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_LOOP_START_EX;
 				end else if (loop_end) begin
-					state_next <= `d_valid ? `STATE_DATA_R_REQ : `STATE_LOOP_END_EX;
+					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_LOOP_END_EX;
 				end else begin
 					state_next <= `STATE_IF_REQ;
 					jmp <= 0;
 				end
-			`STATE_DP_EX:
+			`STATE_DP_EX: begin
 				d_valid <= 0;
 				d_dirty <= 0;
 				state_next <= `STATE_IF_REQ;
-			`STATE_D_EX:
+			end
+			`STATE_D_EX: begin
+				d_dirty <= 1;
 				state_next <= `STATE_IF_REQ;
+			end
 			`STATE_LOOP_START_EX: begin
 				if (!d) begin
 					if (last_loop_end_success) begin
 						jmp <= 1;
-					else
+					end else begin
 						jmp <= 0;
 						skip_loop_count <= skip_loop_count + 1;
 					end
@@ -324,7 +351,7 @@ always @(negedge clk) begin
 				if (last_loop_end_success)
 					jmp_target <= last_loop_end_ip + 1;
 			end else begin
-				stack_write_addr <= sp;
+				stack_write_addr <= sp + 1;
 				stack_write_en <= 1;
 				stack_write_data <= ip;
 				sp <= sp + 1;
@@ -335,7 +362,9 @@ always @(negedge clk) begin
 		if (state == `STATE_LOOP_END_EX) begin
 			if (d) begin
 				jmp_target <= stack_read_data + 1;
+				last_loop_end_success <= 1;
 			end else begin
+				last_loop_end_success <= 0;
 				if (sp == 0)
 					halt_n <= 0;
 				else

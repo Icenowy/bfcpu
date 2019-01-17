@@ -14,7 +14,7 @@ module stack_ram#(
 
 reg [i_addr_width-1:0]read_data;
 
-reg [i_addr_width-1:0]memory[0:max_loop_depth-1];
+reg [i_addr_width-1:0]memory[0:max_loop_depth];
 
 always @(posedge clk) begin
 	if (write_en)
