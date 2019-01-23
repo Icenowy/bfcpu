@@ -34,7 +34,7 @@ module i_mem_tang_bram ( doa, addra, clka, rsta );
 				.IMPLEMENT("9K"),
 				.DEBUGGABLE("NO"),
 				.PACKABLE("NO"),
-				.INIT_FILE("../instructions.mif"),
+				.INIT_FILE("../instructions_tang.mif"),
 				.FILL_ALL("NONE"))
 			inst(
 				.dia({8{1'b0}}),

@@ -21,7 +21,7 @@
     </PortAOption>
     <MemoryInitialization>
         <init_file_enable>true</init_file_enable>
-        <init_file>../instructions.mif</init_file>
+        <init_file>../instructions_tang.mif</init_file>
     </MemoryInitialization>
     <FillMemoryInitValues>
         <fill_all>NONE</fill_all>

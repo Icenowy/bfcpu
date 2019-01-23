@@ -28,7 +28,7 @@ bitstream: bfcpu.bit
 program: bfcpu.bit
 	$(TD) program.tcl
 
-bfcpu.bit: bfcpu.al td.tcl instructions.mif io.adc $(TD_SOURCES)
+bfcpu.bit: bfcpu.al td.tcl instructions_tang.mif io.adc $(TD_SOURCES)
 	$(TD) td.tcl
 
 sim: instr_decode_tb.vcd top_sim.vcd
@@ -41,8 +41,8 @@ top_sim.vcd: top_sim.vvp instructions.hex
 
 gen_mif: gen_mif.o
 
-instructions.mif: instructions.bin gen_mif
-	./gen_mif $(INSTRUCTIONS_DEPTH) < instructions.bin > instructions.mif
+instructions_tang.mif: instructions_tang.bin gen_mif
+	./gen_mif $(INSTRUCTIONS_DEPTH) < instructions_tang.bin > instructions_tang.mif
 
 clean:
 	rm -f *.vvp *.vcd
