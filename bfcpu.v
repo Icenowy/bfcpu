@@ -353,8 +353,7 @@ always @(negedge clk) begin
 				last_loop_end_success <= 0;
 				if (sp == 0)
 					halt_n <= 0;
-				else
-					sp <= sp - 1;
+				sp <= sp - 1;
 			end
 		end
 	end
