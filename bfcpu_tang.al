@@ -2,7 +2,7 @@
 <Project>
     <Project_Created_Time>2019-01-18 00:21:12</Project_Created_Time>
     <TD_Version>4.3.815</TD_Version>
-    <Name>bfcpu</Name>
+    <Name>bfcpu_tang</Name>
     <HardWare>
         <Family>EG4</Family>
         <Device>EG4S20BG256</Device>
