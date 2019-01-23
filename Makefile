@@ -17,6 +17,9 @@ INSTRUCTIONS_DEPTH = 1024
 %.hex: %.bin
 	$(OBJCOPY) -I binary -O verilog $< $@
 
+%.mif: %.bin gen_mif
+	./gen_mif $(INSTRUCTIONS_DEPTH) < $< > $@
+
 TD ?= td
 
 TD_SOURCES = bfcpu.v instr_decode.v ip_controller.v stack_ram.v al_ip/i_mem_tang_bram.v al_ip/d_mem_tang_bram.v d_mem_tang.v i_mem_tang.v top_tang.v
@@ -41,9 +44,6 @@ bfcpu.vvp: bfcpu.v ip_controller.vvp instr_decode.vvp stack_ram.vvp
 top_sim.vcd: top_sim.vvp instructions_sim.hex
 
 gen_mif: gen_mif.o
-
-instructions_tang.mif: instructions_tang.bin gen_mif
-	./gen_mif $(INSTRUCTIONS_DEPTH) < instructions_tang.bin > instructions_tang.mif
 
 clean:
 	rm -f *.vvp *.vcd
