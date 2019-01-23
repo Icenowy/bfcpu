@@ -61,7 +61,6 @@ bfcpu cpu(
 
 i_mem_tang im(
 	.clk(clk),
-	.rst_n(rst_n),
 	
 	.i_req(i_req),
 	.i_addr(i_addr),
@@ -71,7 +70,6 @@ i_mem_tang im(
 
 d_mem_tang dm(
 	.clk(clk),
-	.rst_n(rst_n),
 
 	.d_req(d_req),
 	.d_dir(d_dir),

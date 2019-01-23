@@ -3,7 +3,6 @@ module i_mem_tang #(
 	parameter [31:0]i_mem_length = 32'd1024
 )(
 	input clk,
-	input rst_n,
 
 	input i_req,
 	input [i_addr_width-1:0]i_addr,
@@ -30,7 +29,7 @@ i_mem_tang_bram bram(
 	.doa(read_data),
 	.addra(i_addr),
 	.clka(clk),
-	.rsta(~rst_n)
+	.rsta(0)
 );
 
 endmodule

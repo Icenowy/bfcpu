@@ -3,7 +3,6 @@ module d_mem_tang #(
 	parameter [31:0]d_mem_length = 32'd64
 )(
 	input clk,
-	input rst_n,
 
 	input d_req,
 	input d_dir,
@@ -40,7 +39,7 @@ d_mem_tang_bram bram(
 	.addra(d_addr),
 	.clka(clk),
 	.wea(write_en),
-	.rsta(~rst_n)
+	.rsta(0)
 );
 
 endmodule
