@@ -4,6 +4,7 @@ elaborate -top top_tang
 optimize_rtl
 report_area -file "bfcpu_tang_rtl.area"
 read_adc "io_tang.adc"
+read_sdc "timing_tang.sdc"
 export_db "bfcpu_tang_rtl.db"
 map_macro
 map

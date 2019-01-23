@@ -34,7 +34,7 @@ bitstream_tang: bfcpu_tang.bit
 program_tang: bfcpu_tang.bit
 	$(TD) program_tang.tcl
 
-bfcpu_tang.bit: bfcpu_tang.al td_tang.tcl instructions_tang.mif io_tang.adc $(TD_SOURCES)
+bfcpu_tang.bit: bfcpu_tang.al td_tang.tcl instructions_tang.mif io_tang.adc timing_tang.sdc $(TD_SOURCES)
 	$(TD) td_tang.tcl
 
 instr_decode_tb.vvp: instr_decode_tb.v instr_decode.vvp
