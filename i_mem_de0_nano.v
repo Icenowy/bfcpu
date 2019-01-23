@@ -28,7 +28,7 @@ end
 i_mem_de0_nano_bram bram(
 	.q(read_data),
 	.address(i_addr),
-	.clock(clk),
+	.clock(clk)
 );
 
 endmodule
