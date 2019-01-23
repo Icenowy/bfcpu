@@ -21,6 +21,9 @@ TD ?= td
 
 TD_SOURCES = bfcpu.v instr_decode.v ip_controller.v stack_ram.v al_ip/i_mem_tang_bram.v al_ip/d_mem_tang_bram.v d_mem_tang.v i_mem_tang.v top_tang.v
 
+.PHONY: sim
+sim: instr_decode_tb.vcd top_sim.vcd
+
 .PHONY: bitstream
 bitstream: bfcpu.bit
 
@@ -30,8 +33,6 @@ program: bfcpu.bit
 
 bfcpu.bit: bfcpu.al td.tcl instructions_tang.mif io.adc $(TD_SOURCES)
 	$(TD) td.tcl
-
-sim: instr_decode_tb.vcd top_sim.vcd
 
 instr_decode_tb.vvp: instr_decode_tb.v instr_decode.vvp
 top_sim.vvp: top_sim.v i_mem_sim.vvp d_mem_sim.vvp io_sim.vvp bfcpu.vvp
