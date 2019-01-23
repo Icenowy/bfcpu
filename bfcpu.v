@@ -349,6 +349,7 @@ always @(negedge clk) begin
 			if (d) begin
 				jmp_target <= stack_read_data_reg + 1;
 				last_loop_end_success <= 1;
+				last_loop_end_ip <= ip;
 			end else begin
 				last_loop_end_success <= 0;
 				if (sp == 0)
