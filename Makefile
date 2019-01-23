@@ -37,7 +37,7 @@ instr_decode_tb.vvp: instr_decode_tb.v instr_decode.vvp
 top_sim.vvp: top_sim.v i_mem_sim.vvp d_mem_sim.vvp io_sim.vvp bfcpu.vvp
 bfcpu.vvp: bfcpu.v ip_controller.vvp instr_decode.vvp stack_ram.vvp
 
-top_sim.vcd: top_sim.vvp instructions.hex
+top_sim.vcd: top_sim.vvp instructions_sim.hex
 
 gen_mif: gen_mif.o
 

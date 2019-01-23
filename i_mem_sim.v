@@ -13,7 +13,7 @@ module i_mem_sim #(
 reg [7:0]memory[0:i_mem_length-1];
 
 initial begin
-	$readmemh("instructions.hex", memory);
+	$readmemh("instructions_sim.hex", memory);
 end
 
 assign i_ack = i_req;
