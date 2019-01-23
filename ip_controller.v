@@ -7,10 +7,8 @@ module ip_controller #(
 	input update_ip,
 	input jmp,
 	input [i_addr_width-1:0]jmp_target,
-	output [i_addr_width-1:0]ip
+	output reg [i_addr_width-1:0]ip
 );
-
-reg [i_addr_width-1:0]ip;
 
 always @(posedge clk) begin
 	if (!rst_n) begin

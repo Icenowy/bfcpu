@@ -8,43 +8,29 @@ module bfcpu #(
 	input clk,
 	input rst_n,
 
-	output i_req,
-	output [i_addr_width-1:0]i_addr,
+	output reg i_req,
+	output reg [i_addr_width-1:0]i_addr,
 	input i_ack,
 	input [7:0]i_rdata,
 
-	output d_req,
-	output d_dir,
-	output [d_addr_width-1:0]d_addr,
-	output [7:0]d_wdata,
+	output reg d_req,
+	output reg d_dir,
+	output reg [d_addr_width-1:0]d_addr,
+	output reg [7:0]d_wdata,
 	input d_ack,
 	input [7:0]d_rdata,
 
-	output io_req,
-	output io_dir,
-	output [7:0]io_wdata,
+	output reg io_req,
+	output reg io_dir,
+	output reg [7:0]io_wdata,
 	input io_ack,
 	input [7:0]io_rdata,
 
-	output halt_n
+	output reg halt_n
 );
 
 `include "macros/states.vh"
 `include "macros/direction.vh"
-
-reg i_req;
-reg [i_addr_width-1:0]i_addr;
-
-reg d_req;
-reg d_dir;
-reg [d_addr_width-1:0]d_addr;
-reg [7:0]d_wdata;
-
-reg io_req;
-reg io_dir;
-reg [7:0]io_wdata;
-
-reg halt_n;
 
 wire [i_addr_width-1:0]ip;
 reg [d_addr_width-1:0]dp;

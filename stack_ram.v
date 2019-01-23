@@ -9,10 +9,8 @@ module stack_ram#(
 	input [i_addr_width-1:0]write_data,
 
 	input [31:0]read_addr,
-	output [i_addr_width-1:0]read_data
+	output reg [i_addr_width-1:0]read_data
 );
-
-reg [i_addr_width-1:0]read_data;
 
 reg [i_addr_width-1:0]memory[0:max_loop_depth];
 
