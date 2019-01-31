@@ -149,7 +149,7 @@ always @(posedge clk) begin
 					state_next <= `STATE_IO_W_REQ;
 				else if (loop_start)
 					state_next <= `STATE_LOOP_START_EX;
-				else if (loop_end)
+				else
 					state_next <= `STATE_LOOP_END_EX;
 			end
 			`STATE_DATA_W_REQ:
@@ -218,7 +218,7 @@ always @(posedge clk) begin
 				d_dirty <= 1;
 				if (inc_d)
 					d <= d + 1;
-				else if (dec_d)
+				else
 					d <= d - 1;
 				state_next <= `STATE_IF_REQ;
 			end
