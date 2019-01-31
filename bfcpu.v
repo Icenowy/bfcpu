@@ -3,7 +3,8 @@ module bfcpu #(
 	parameter [8:0]d_addr_width = 8'd8,
 	parameter [31:0]reset_vector = 32'h0,
 	parameter [31:0]reset_dp = 32'h0,
-	parameter [31:0]max_loop_depth = 32'h100
+	parameter [31:0]max_loop_depth = 32'h100,
+	parameter [7:0]sp_width = 8'd8
 )(
 	input clk,
 	input rst_n,
@@ -60,11 +61,11 @@ reg [i_addr_width-1:0]jmp_target;
 reg last_loop_end_success;
 reg [i_addr_width-1:0]last_loop_end_ip;
 
-reg [31:0]skip_loop_count;
+reg [sp_width-1:0]skip_loop_count;
 
-reg [31:0]sp;
-reg [31:0]stack_write_addr;
-wire [31:0]stack_read_addr = sp;
+reg [sp_width-1:0]sp;
+reg [sp_width-1:0]stack_write_addr;
+wire [sp_width-1:0]stack_read_addr = sp;
 reg stack_write_en;
 reg [i_addr_width-1:0]stack_write_data;
 wire [i_addr_width-1:0]stack_read_data;
@@ -97,7 +98,8 @@ ip_controller#(
 
 stack_ram#(
 	.i_addr_width(i_addr_width),
-	.max_loop_depth(max_loop_depth)
+	.max_loop_depth(max_loop_depth),
+	.sp_width(sp_width)
 ) st_mem(
 	.clk(clk),
 
