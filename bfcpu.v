@@ -246,8 +246,6 @@ always @(posedge clk) begin
 			default:
 				state_next <= `STATE_IF_REQ;
 			endcase
-		end else begin
-			state_next <= state;
 		end
 	end
 end
