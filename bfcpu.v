@@ -115,9 +115,6 @@ always @(posedge clk) begin
 	if (!rst_n) begin
 		state <= `STATE_START;
 		state_next <= `STATE_START;
-
-		jmp <= 0;
-		skip_loop_count <= 8'b0;
 	end else begin
 		if (halt_n) begin
 			state <= state_next;
@@ -173,53 +170,29 @@ always @(posedge clk) begin
 			`STATE_INSTR_DECODE:
 				if (skip_loop_count != 0) begin
 					state_next <= `STATE_IF_REQ;
-					if (loop_start)
-						skip_loop_count <= skip_loop_count + 1;
-					else if (loop_end)
-						skip_loop_count <= skip_loop_count - 1;
-					jmp <= 0;
 				end else if (inc_dp || dec_dp) begin
 					state_next <= d_dirty ? `STATE_DATA_W_REQ : `STATE_DP_EX;
-					jmp <= 0;
 				end else if (inc_d || dec_d) begin
 					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_D_EX;
-					jmp <= 0;
 				end else if (out_d) begin
 					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_IO_W_REQ;
-					jmp <= 0;
 				end else if (in_d) begin
 					state_next <= `STATE_IO_R_REQ;
-					jmp <= 0;
 				end else if (loop_start) begin
 					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_LOOP_START_EX;
 				end else if (loop_end) begin
 					state_next <= !d_valid ? `STATE_DATA_R_REQ : `STATE_LOOP_END_EX;
 				end else begin
 					state_next <= `STATE_IF_REQ;
-					jmp <= 0;
 				end
 			`STATE_DP_EX:
 				state_next <= `STATE_IF_REQ;
 			`STATE_D_EX:
 				state_next <= `STATE_IF_REQ;
 			`STATE_LOOP_START_EX: begin
-				if (!d) begin
-					if (last_loop_end_success) begin
-						jmp <= 1;
-					end else begin
-						jmp <= 0;
-						skip_loop_count <= skip_loop_count + 1;
-					end
-				end else begin
-					jmp <= 0;
-				end
 				state_next <= `STATE_IF_REQ;
 			end
 			`STATE_LOOP_END_EX: begin
-				if (d)
-					jmp <= 1;
-				else
-					jmp <= 0;
 				stack_read_data_reg <= stack_read_data;
 				state_next <= `STATE_IF_REQ;
 			end
@@ -227,6 +200,44 @@ always @(posedge clk) begin
 				state_next <= `STATE_IF_REQ;
 			endcase
 		end
+	end
+end
+
+always @(posedge clk) begin
+	if (!rst_n) begin
+		jmp <= 0;
+		skip_loop_count <= 8'b0;
+	end else begin
+		case (state_next)
+		`STATE_INSTR_DECODE: begin
+			if (skip_loop_count != 0) begin
+				if (loop_start)
+					skip_loop_count <= skip_loop_count + 1;
+				else if (loop_end)
+					skip_loop_count <= skip_loop_count - 1;
+			end
+		end
+		`STATE_LOOP_START_EX: begin
+			if (!d) begin
+				if (last_loop_end_success) begin
+					jmp <= 1;
+				end else begin
+					jmp <= 0;
+					skip_loop_count <= skip_loop_count + 1;
+				end
+			end else begin
+				jmp <= 0;
+			end
+		end
+		`STATE_LOOP_END_EX: begin
+			if (d)
+				jmp <= 1;
+			else
+				jmp <= 0;
+		end
+		default:
+			jmp <= 0;
+		endcase
 	end
 end
 
