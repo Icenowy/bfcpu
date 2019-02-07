@@ -126,7 +126,6 @@ always @(posedge clk) begin
 				if (i_ack)
 					state_next <= `STATE_IF_ACK;
 			`STATE_IF_ACK: begin
-				instruction <= i_rdata;
 				state_next <= `STATE_INSTR_DECODE;
 			end
 			`STATE_DATA_R_REQ:
@@ -193,13 +192,23 @@ always @(posedge clk) begin
 				state_next <= `STATE_IF_REQ;
 			end
 			`STATE_LOOP_END_EX: begin
-				stack_read_data_reg <= stack_read_data;
 				state_next <= `STATE_IF_REQ;
 			end
 			default:
 				state_next <= `STATE_IF_REQ;
 			endcase
 		end
+	end
+end
+
+always @(posedge clk) begin
+	if (rst_n) begin
+		case (state_next)
+		`STATE_IF_ACK:
+			instruction <= i_rdata;
+		`STATE_LOOP_END_EX:
+			stack_read_data_reg <= stack_read_data;
+		endcase
 	end
 end
 
