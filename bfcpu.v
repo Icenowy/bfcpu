@@ -118,8 +118,6 @@ always @(posedge clk) begin
 
 		jmp <= 0;
 		skip_loop_count <= 8'b0;
-		d_valid <= 0;
-		d_dirty <= 0;
 	end else begin
 		if (halt_n) begin
 			state <= state_next;
@@ -140,9 +138,6 @@ always @(posedge clk) begin
 				if (d_ack)
 					state_next <= `STATE_DATA_R_ACK;
 			`STATE_DATA_R_ACK: begin
-				d <= d_rdata;
-				d_valid <= 1;
-				d_dirty <= 0;
 				if (inc_d || dec_d)
 					state_next <= `STATE_D_EX;
 				else if (out_d)
@@ -157,21 +152,15 @@ always @(posedge clk) begin
 			`STATE_DATA_W_WAIT:
 				if (d_ack)
 					state_next <= `STATE_DATA_W_ACK;
-			`STATE_DATA_W_ACK: begin
-				d_dirty <= 0;
+			`STATE_DATA_W_ACK:
 				state_next <= `STATE_DP_EX;
-			end
 			`STATE_IO_R_REQ:
 				state_next <= `STATE_IO_R_WAIT;
 			`STATE_IO_R_WAIT:
 				if (io_ack)
 					state_next <= `STATE_IO_R_ACK;
-			`STATE_IO_R_ACK: begin
-				d <= io_rdata;
-				d_valid <= 1;
-				d_dirty <= 1;
+			`STATE_IO_R_ACK:
 				state_next <= `STATE_IF_REQ;
-			end
 			`STATE_IO_W_REQ:
 				state_next <= `STATE_IO_W_WAIT;
 			`STATE_IO_W_WAIT:
@@ -209,19 +198,10 @@ always @(posedge clk) begin
 					state_next <= `STATE_IF_REQ;
 					jmp <= 0;
 				end
-			`STATE_DP_EX: begin
-				d_valid <= 0;
-				d_dirty <= 0;
+			`STATE_DP_EX:
 				state_next <= `STATE_IF_REQ;
-			end
-			`STATE_D_EX: begin
-				d_dirty <= 1;
-				if (inc_d)
-					d <= d + 1;
-				else
-					d <= d - 1;
+			`STATE_D_EX:
 				state_next <= `STATE_IF_REQ;
-			end
 			`STATE_LOOP_START_EX: begin
 				if (!d) begin
 					if (last_loop_end_success) begin
@@ -247,6 +227,39 @@ always @(posedge clk) begin
 				state_next <= `STATE_IF_REQ;
 			endcase
 		end
+	end
+end
+
+always @(posedge clk) begin
+	if (!rst_n) begin
+		d_valid <= 0;
+		d_dirty <= 0;
+	end else begin
+		case (state_next)
+		`STATE_DATA_R_ACK: begin
+			d <= d_rdata;
+			d_valid <= 1;
+			d_dirty <= 0;
+		end
+		`STATE_DATA_W_ACK:
+			d_dirty <= 0;
+		`STATE_IO_R_ACK: begin
+			d <= io_rdata;
+			d_valid <= 1;
+			d_dirty <= 1;
+		end
+		`STATE_DP_EX: begin
+			d_valid <= 0;
+			d_dirty <= 0;
+		end
+		`STATE_D_EX: begin
+			d_dirty <= 1;
+			if (inc_d)
+				d <= d + 1;
+			else
+				d <= d - 1;
+		end
+		endcase
 	end
 end
 
