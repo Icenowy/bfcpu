@@ -18,7 +18,7 @@ wire write_en;
 wire [7:0]write_data;
 wire [7:0]read_data;
 
-assign write_en = d_dir == `DIRECTION_WRITE;
+assign write_en = d_req && d_dir == `DIRECTION_WRITE;
 assign write_data = d_wdata;
 assign d_rdata = read_data;
 
