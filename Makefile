@@ -24,6 +24,7 @@ COMMON_SOURCES = bfcpu.v instr_decode.v ip_controller.v stack_ram.v
 
 TD ?= td
 QUARTUS_SH ?= quartus_sh
+QUARTUS_PGM ?= quartus_pgm
 
 TANG_SOURCES = $(COMMON_SOURCES) al_ip/i_mem_tang_bram.v al_ip/d_mem_tang_bram.v d_mem_tang.v i_mem_tang.v top_tang.v
 A_E115FB_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_a_e115fb_bram.v quartus_ip/i_mem_a_e115fb_bram.v d_mem_a_e115fb.v i_mem_a_e115fb.v top_a_e115fb.v
@@ -40,6 +41,10 @@ bitstream_a_e115fb: bfcpu_a_e115fb.sof
 .PHONY: program_tang
 program_tang: bfcpu_tang.bit
 	$(TD) program_tang.tcl
+
+.PHONY: program_a_e115fb
+program_a_e115fb: bfcpu_a_e115fb.sof
+	$(QUARTUS_PGM) -c usb-blaster -m JTAG -o "p;bfcpu_a_e115fb.sof"
 
 bfcpu_tang.bit: bfcpu_tang.al td_tang.tcl instructions_tang.mif io_tang.adc timing_tang.sdc $(TANG_SOURCES)
 	$(TD) td_tang.tcl
