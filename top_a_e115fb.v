@@ -1,6 +1,6 @@
 module top_a_e115fb(
 	input clk,
-	input ext_rst,
+	input ext_rst_n,
 	output reg [3:0]led_n
 );
 
@@ -14,7 +14,7 @@ always @(posedge clk) begin
 end
 
 wire int_rst_n = int_rst_cnt == 3'b111;
-wire rst_n = int_rst_n; /* TODO: external reset */
+wire rst_n = int_rst_n & ext_rst_n;
 
 wire i_req;
 wire [15:0]i_addr;

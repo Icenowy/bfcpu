@@ -65,14 +65,16 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_location_assignment PIN_AB11 -to clk
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk
 set_location_assignment PIN_C3 -to led_n[0]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_n[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_n[0]
 set_location_assignment PIN_C4 -to led_n[1]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_n[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_n[1]
 set_location_assignment PIN_B5 -to led_n[2]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_n[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_n[2]
 set_location_assignment PIN_A5 -to led_n[3]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_n[3]
-set_location_assignment PIN_N21 -to ext_rst
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ext_rst
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_n[3]
 
+
+set_location_assignment PIN_N21 -to ext_rst_n
+set_instance_assignment -name IO_STANDARD "1.8 V" -to ext_rst_n
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_n
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
