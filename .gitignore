@@ -24,3 +24,4 @@ simulation/
 greybox_tmp/
 *.bak
 *.qws
+*.sof
