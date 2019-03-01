@@ -1,6 +1,6 @@
 *.vvp
 *.vcd
-instructions.hex
+*.hex
 
 *.mif
 
@@ -25,3 +25,8 @@ greybox_tmp/
 *.bak
 *.qws
 *.sof
+
+*.icebin
+*.icebin_padded
+*.asc
+*.json

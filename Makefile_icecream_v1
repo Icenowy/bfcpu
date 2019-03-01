@@ -1,0 +1,28 @@
+COMPONENT = up5k
+PACKAGE = sg48
+
+VERILOG_FILES = top_icecream_v1.v d_mem_icecream_v1.v i_mem_icecream_v1.v bfcpu.v instr_decode.v ip_controller.v stack_ram.v
+PCF_FILE = icecream_v1.pcf
+
+FLASHROM_LAYOUT = icecream_v1.flash_layout
+FLASHROM_IMAGE = bitstream
+
+FLASH_SIZE = 16777216
+
+all: bfcpu_icecream_v1.icebin
+
+flash: bfcpu_icecream_v1.icebin_padded
+	flashrom -p usbblaster_spi -N -l "$(FLASHROM_LAYOUT)" -i "$(FLASHROM_IMAGE)" -w "$<"
+
+bfcpu_icecream_v1.json: $(VERILOG_FILES) instructions_icecream_v1.hex
+	yosys -p "synth_ice40 -json $@" $(VERILOG_FILES)
+
+%.asc: %.json $(PCF_FILE)
+	nextpnr-ice40 "--$(COMPONENT)" --package "$(PACKAGE)" --pcf "$(PCF_FILE)" --json "$<" --asc "$@"
+
+%.icebin: %.asc
+	icepack "$<" "$@"
+
+%.icebin_padded: %.icebin
+	dd if=/dev/zero of="$@" iflag=count_bytes count="$(FLASH_SIZE)"
+	dd if="$<" of="$@" conv=notrunc
