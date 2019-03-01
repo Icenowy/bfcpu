@@ -40,10 +40,10 @@ reg [7:0]io_rdata;
 
 SB_PLL40_CORE #(
 	.FEEDBACK_PATH("SIMPLE"),
-	.DIVR(4'b0010),		// DIVR =  2
-	.DIVF(7'b0101101),	// DIVF = 45
+	.DIVR(4'b0100),		// DIVR =  4
+	.DIVF(7'b0111111),	// DIVF = 63
 	.DIVQ(3'b101),		// DIVQ =  5
-	.FILTER_RANGE(3'b001)	// FILTER_RANGE = 1
+	.FILTER_RANGE(3'b001)	// FILTER_RANGE = 1)
 ) pll(
 	.LOCK(pll_locked),
 	.RESETB(1'b1),
