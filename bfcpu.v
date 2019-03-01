@@ -360,7 +360,7 @@ end
 
 always @(negedge clk) begin
 	if (!rst_n) begin
-		last_loop_end_success = 0;
+		last_loop_end_success <= 0;
 		sp <= 0;
 		stack_write_en <= 0;
 		halt_n <= 1;
