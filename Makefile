@@ -29,6 +29,7 @@ QUARTUS_PGM ?= quartus_pgm
 TANG_SOURCES = $(COMMON_SOURCES) al_ip/i_mem_tang_bram.v al_ip/d_mem_tang_bram.v d_mem_tang.v i_mem_tang.v top_tang.v
 A_E115FB_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_a_e115fb_bram.v quartus_ip/i_mem_a_e115fb_bram.v d_mem_a_e115fb.v i_mem_a_e115fb.v top_a_e115fb.v
 DE0_NANO_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_de0_nano_bram.v quartus_ip/i_mem_de0_nano_bram.v d_mem_de0_nano.v i_mem_de0_nano.v top_de0_nano.v
+ICECREAM_V1_SOURCES = $(COMMON_SOURCES) d_mem_icecream_v1.v i_mem_icecream_v1.v top_icecream_v1.v
 
 .PHONY: sim
 sim: instr_decode_tb.vcd top_sim.vcd
