@@ -6,8 +6,8 @@ module i_mem_icecream_v1 #(
 
 	input i_req,
 	input [i_addr_width-1:0]i_addr,
-	output reg i_ack,
-	output reg [7:0]i_rdata
+	output i_ack,
+	output [7:0]i_rdata
 );
 
 reg [7:0]memory[0:i_mem_length-1];
