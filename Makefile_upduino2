@@ -1,0 +1,21 @@
+COMPONENT = up5k
+PACKAGE = sg48
+
+VERILOG_FILES = top_upduino2.v d_mem_upduino2.v i_mem_upduino2.v bfcpu.v instr_decode.v ip_controller.v stack_ram.v
+PCF_FILE = upduino2.pcf
+
+NEXTPNR_FLAGS = --opt-timing --freq 12
+
+all: bfcpu_upduino2.icebin
+
+flash: bfcpu_upduino2.icebin
+	iceprog $<
+
+bfcpu_upduino2.json: $(VERILOG_FILES) instructions_upduino2.hex
+	yosys -p "synth_ice40 -json $@" $(VERILOG_FILES)
+
+%.asc: %.json $(PCF_FILE)
+	nextpnr-ice40 "--$(COMPONENT)" --package "$(PACKAGE)" --pcf "$(PCF_FILE)" --json "$<" --asc "$@" $(NEXTPNR_FLAGS)
+
+%.icebin: %.asc
+	icepack "$<" "$@"

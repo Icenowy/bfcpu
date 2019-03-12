@@ -30,6 +30,7 @@ TANG_SOURCES = $(COMMON_SOURCES) al_ip/i_mem_tang_bram.v al_ip/d_mem_tang_bram.v
 A_E115FB_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_a_e115fb_bram.v quartus_ip/i_mem_a_e115fb_bram.v d_mem_a_e115fb.v i_mem_a_e115fb.v top_a_e115fb.v
 DE0_NANO_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_de0_nano_bram.v quartus_ip/i_mem_de0_nano_bram.v d_mem_de0_nano.v i_mem_de0_nano.v top_de0_nano.v
 ICECREAM_V1_SOURCES = $(COMMON_SOURCES) d_mem_icecream_v1.v i_mem_icecream_v1.v top_icecream_v1.v
+UPDUINO2_SOURCES = $(COMMON_SOURCES) d_mem_upduino2.v i_mem_upduino2.v top_upduino2.v
 
 .PHONY: sim
 sim: instr_decode_tb.vcd top_sim.vcd
@@ -45,6 +46,9 @@ bitstream_de0_nano: bfcpu_de0_nano.sof
 
 .PHONY: bitstream_icecream_v1
 bitstream_icecream_v1: bfcpu_icecream_v1.icebin
+
+.PHONY: bitstream_upduino2
+bitstream_upduino2: bfcpu_upduino2.icebin
 
 .PHONY: program_tang
 program_tang: bfcpu_tang.bit
@@ -62,6 +66,10 @@ program_de0_nano: bfcpu_de0_nano.sof
 program_icecream_v1: bfcpu_icecream_v1.icebin
 	$(MAKE) -f Makefile_icecream_v1 flash
 
+.PHONY: program_upduino2
+program_upduino2: bfcpu_upduino2.icebin
+	$(MAKE) -f Makefile_upduino2 flash
+
 bfcpu_tang.bit: bfcpu_tang.al td_tang.tcl instructions_tang.mif io_tang.adc timing_tang.sdc $(TANG_SOURCES)
 	$(TD) td_tang.tcl
 
@@ -73,6 +81,9 @@ bfcpu_de0_nano.sof: bfcpu_de0_nano.qpf top_de0_nano.qsf quartus_de0_nano.tcl ins
 
 bfcpu_icecream_v1.icebin: Makefile_icecream_v1 icecream_v1.pcf instructions_icecream_v1.hex $(ICECREAM_V1_SOURCES)
 	$(MAKE) -f Makefile_icecream_v1 "$@"
+
+bfcpu_upduino2.icebin: Makefile_upduino2 upduino2.pcf instructions_upduino2.hex $(UPDUINO2_SOURCES)
+	$(MAKE) -f Makefile_upduino2 "$@"
 
 instr_decode_tb.vvp: instr_decode_tb.v instr_decode.vvp
 top_sim.vvp: top_sim.v i_mem_sim.vvp d_mem_sim.vvp io_sim.vvp bfcpu.vvp
