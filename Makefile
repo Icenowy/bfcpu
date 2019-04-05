@@ -23,10 +23,12 @@ INSTRUCTIONS_DEPTH = 1024
 COMMON_SOURCES = bfcpu.v instr_decode.v ip_controller.v stack_ram.v
 
 TD ?= td
+JTAG ?= jtag
 QUARTUS_SH ?= quartus_sh
 QUARTUS_PGM ?= quartus_pgm
 
 TANG_SOURCES = $(COMMON_SOURCES) al_ip/i_mem_tang_bram.v al_ip/d_mem_tang_bram.v d_mem_tang.v i_mem_tang.v top_tang.v
+ELF2_V1_SOURCES = $(COMMON_SOURCES) al_ip/i_mem_elf2_v1_bram.v al_ip/d_mem_elf2_v1_bram.v d_mem_elf2_v1.v i_mem_elf2_v1.v top_elf2_v1.v
 A_E115FB_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_a_e115fb_bram.v quartus_ip/i_mem_a_e115fb_bram.v d_mem_a_e115fb.v i_mem_a_e115fb.v top_a_e115fb.v
 DE0_NANO_SOURCES = $(COMMON_SOURCES) quartus_ip/d_mem_de0_nano_bram.v quartus_ip/i_mem_de0_nano_bram.v d_mem_de0_nano.v i_mem_de0_nano.v top_de0_nano.v
 ICECREAM_V1_SOURCES = $(COMMON_SOURCES) d_mem_icecream_v1.v i_mem_icecream_v1.v top_icecream_v1.v
@@ -37,6 +39,9 @@ sim: instr_decode_tb.vcd top_sim.vcd
 
 .PHONY: bitstream_tang
 bitstream_tang: bfcpu_tang.bit
+
+.PHONY: bitstream_elf2_v1
+bitstream_elf2_v1: bfcpu_elf2_v1.bit
 
 .PHONY: bitstream_a_e115fb
 bitstream_a_e115fb: bfcpu_a_e115fb.sof
@@ -54,6 +59,10 @@ bitstream_upduino2: bfcpu_upduino2.icebin
 program_tang: bfcpu_tang.bit
 	$(TD) program_tang.tcl
 
+.PHONY: program_elf2_v1
+program_elf2_v1: al_devicechain/bfcpu_elf2_v1_sram.svf
+	$(JTAG) program_elf2_v1.tcl
+
 .PHONY: program_a_e115fb
 program_a_e115fb: bfcpu_a_e115fb.sof
 	$(QUARTUS_PGM) -c usb-blaster -m JTAG -o "p;bfcpu_a_e115fb.sof"
@@ -70,8 +79,15 @@ program_icecream_v1: bfcpu_icecream_v1.icebin
 program_upduino2: bfcpu_upduino2.icebin
 	$(MAKE) -f Makefile_upduino2 flash
 
+al_devicechain/bfcpu_elf2_v1_sram.svf: bfcpu_elf2_v1.bit svf_elf2_v1.tcl
+	mkdir -p al_devicechain
+	$(TD) svf_elf2_v1.tcl
+
 bfcpu_tang.bit: bfcpu_tang.al td_tang.tcl instructions_tang.mif io_tang.adc timing_tang.sdc $(TANG_SOURCES)
 	$(TD) td_tang.tcl
+
+bfcpu_elf2_v1.bit: bfcpu_elf2_v1.al td_elf2_v1.tcl instructions_elf2_v1.mif io_elf2_v1.adc timing_elf2_v1.sdc $(ELF2_V1_SOURCES)
+	$(TD) td_elf2_v1.tcl
 
 bfcpu_a_e115fb.sof: bfcpu_a_e115fb.qpf top_a_e115fb.qsf quartus_a_e115fb.tcl instructions_a_e115fb.mif top_a_e115fb.sdc $(A_E115FB_SOURCES)
 	$(QUARTUS_SH) -t quartus_a_e115fb.tcl && cp output_files/top_a_e115fb.sof bfcpu_a_e115fb.sof

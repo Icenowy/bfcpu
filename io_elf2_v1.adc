@@ -1,0 +1,3 @@
+set_pin_assignment {led_n[0]} { LOCATION = P19; IOSTANDARD = LVCMOS33;  }
+set_pin_assignment {led_n[1]} { LOCATION = P21; IOSTANDARD = LVCMOS33;  }
+set_pin_assignment {led_n[2]} { LOCATION = P22; IOSTANDARD = LVCMOS33;  }

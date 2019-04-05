@@ -16,6 +16,11 @@ td_*.log
 *.timing
 *.tsm
 *.bid
+*_tdmap.v
+*_tdpack.v
+*_tdread.v
+*_tdrtl.v
+al_devicechain/
 
 incremental_db/
 db/
