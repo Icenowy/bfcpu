@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 	printf("DATA_RADIX\t=\tHEX;\n");
 	printf("CONTENT\t BEGIN\n");
 	uint8_t content;
-	size_t index;
+	size_t index = 0;
 	while (fread(&content, 1, sizeof(uint8_t), stdin) == sizeof(uint8_t)) {
 		printf("%x\t\t:%02x;\n", (unsigned int) index, (unsigned int)content);
 		index++;
